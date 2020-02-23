@@ -17,12 +17,14 @@ class rfid(threading.Thread):
     
         while self.running:
             
-            line = self.device.readline()
+            line = self.device.readline().decode('ascii')
             tag_time = str(int(time.time()))
-            print("[TAG] "+str(line))
-            self.tag_arrived = True
-            
-            with open(tc.serial_log, 'a') as file:
-                file.write(tag_time+","+line)
+
+            if (len(line) > 2):
+                print("[TAG] "+line)
+                self.tag_arrived = True
+                
+                with open(tc.serial_log, 'a') as file:
+                    file.write(tag_time+","+line+"\n")
 
 
