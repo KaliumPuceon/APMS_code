@@ -16,7 +16,7 @@ class scale(threading.Thread):
         self.on_scale = False
         self.off_scale_count = 0
 
-        increment = (5-1.5)/300
+        self.increment = (5-1.5)/300
 
         self.reset_bins()
             
@@ -27,7 +27,7 @@ class scale(threading.Thread):
 
             value = self.read_scale()
 
-            if (vale > threshold) && (not self.on_scale):
+            if (value > threshold) and (not self.on_scale):
 
                 self.on_scale = True
                 self.off_scale_count = 0
@@ -75,7 +75,7 @@ class scale(threading.Thread):
     def reset_bins(self):
 
         for k in range(300):
-            self.weigh_bins[k] = [0,(self.min_weight + (k*increment), self.max_weight + ((k+1)*increment))]
+            self.weigh_bins[k] = [0,(self.min_weight + (k*self.increment), self.max_weight + ((k+1)*self.increment))]
  
             
 

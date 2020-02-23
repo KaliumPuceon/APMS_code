@@ -17,12 +17,12 @@ class rfid(threading.Thread):
     
         while self.running:
             
-            line = ser.readline()
+            line = self.device.readline()
             tag_time = str(int(time.time()))
-            print("[TAG] "+line)
+            print("[TAG] "+str(line))
             self.tag_arrived = True
             
             with open(tc.serial_log, 'a') as file:
-                myfile.write(tag_time+","+line)
+                file.write(tag_time+","+line)
 
 

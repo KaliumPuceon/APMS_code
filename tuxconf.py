@@ -10,7 +10,7 @@ image_height = 1080
 
 # RFID reader
 serial_log = './serial_log.txt'
-serial_path = '/dev/ttyUSB0'
+serial_path = '/dev/ttyACM1'
 serial_baud = '115200'
 
 # Scale
