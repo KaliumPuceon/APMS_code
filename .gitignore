@@ -133,3 +133,7 @@ tags
 .vim
 
 # End of https://www.gitignore.io/api/vim,python
+
+img/*
+serial_log.txt
+weight_log.txt
