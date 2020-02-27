@@ -27,4 +27,6 @@ class rfid(threading.Thread):
                 with open(tc.serial_log, 'a') as file:
                     file.write(tag_time+","+line+"\n")
 
+        self.device.close()
+
 

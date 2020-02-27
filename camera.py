@@ -19,8 +19,7 @@ class capture(threading.Thread):
         self.cam.set(cv2.CAP_PROP_FRAME_WIDTH,tc.image_width)
         self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT,tc.image_height)
         self.cam.set(cv2.CAP_PROP_AUTOFOCUS, 1)
-        self.cam.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
-        #self.cam.set(cv2.CAP_PROP_EXPOSURE, 0)
+        self.cam.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
         self.count = 0
         self.frames_remaining = 0
         self.image_ring = collections.deque("",tc.pre_buffer+tc.post_buffer)
@@ -54,7 +53,7 @@ class capture(threading.Thread):
     
     def request_buffer(self): # Make a request to save buffer
 
-        if not(self.save_request):
+        if not(self.save_request or self.lock_request):
             print("Save requested")
 
             self.main_image = self.take_pic() # Choose the core image
@@ -74,12 +73,14 @@ class capture(threading.Thread):
             print("Start saving buffer")
             self.lock_request = True
 
+            localbuffer = list(self.image_ring) # make value copy of array
+
             os.makedirs(self.filename)
 
 
             cv2.imwrite(self.filename+"/main.jpg", self.main_image) # store core image
-            fourcc = cv2.VideoWriter_fourcc('X','2','6','4')
-            videowriter = cv2.VideoWriter(self.filename+"/capture.mp4",fourcc, 10, (1920,1080))
+            fourcc = cv2.VideoWriter_fourcc('m','p','4','v')
+            videowriter = cv2.VideoWriter(self.filename+"/capture.mp4",fourcc, 1/tc.frame_period, (tc.image_width,tc.image_height))
 
             for image in self.image_ring:
 

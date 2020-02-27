@@ -1,20 +1,20 @@
 # TuxCap config file
 
 # Camera
-image_dir = './img/'
-pre_buffer = 25
-post_buffer = 25
+image_dir = '/home/pi/tuxcap_v2/img/'
+pre_buffer = 10
+post_buffer = 10
 frame_period = 0.1
-image_width = 1920
-image_height = 1080
+image_width = 1280
+image_height = 720
 
 # RFID reader
-serial_log = './serial_log.txt'
-serial_path = '/dev/ttyACM1'
+serial_log = '/home/pi/tuxcap_v2/serial_log.txt'
+serial_path = '/dev/ttyACM0'
 serial_baud = '115200'
 
 # Scale
-weight_log = './weight_log.txt'
+weight_log = '/home/pi/tuxcap_v2/weight_log.txt'
 weight_threshold = 0.996
 calibration_factor = 51712.18
 weights_array_size = 10;
