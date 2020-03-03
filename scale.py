@@ -37,6 +37,7 @@ class scale(threading.Thread):
 
         self.reset_bins()
             
+        print(self.weigh_bins)
 
     def run(self):
 
@@ -44,19 +45,19 @@ class scale(threading.Thread):
 
             value = self.read_scale()
 
-            if (value > self.threshold) and (not self.on_scale):
+            if (value/1000 > self.threshold) and (not self.on_scale):
 
                 self.on_scale = True
                 print("Animal on scale")
                 self.off_scale_count = 0
 
             if self.on_scale:
-                valid_measure = self.assign_bin(value)
+                valid_measure = self.assign_bin(value/1000)
 
                 if not valid_measure:
                     
                     self.off_scale_count += 1
-                    print("off scale count: " + str(self.off_scale_count))
+                    print("off scale count: " + str(self.off_scale_count) + " with "+str(value/1000))
 
                     if self.off_scale_count > 50:
 
@@ -71,28 +72,31 @@ class scale(threading.Thread):
                         weight_time = str(int(time.time()))
 
                         with open(tc.weight_log, 'a') as file:
-                            myfile.write(weight_time+","+str(weight))
+                            file.write(weight_time+","+str(weight))
+                else:
+                    self.off_scale_count = 0
 
 
     def assign_bin(self,value):
 
         for k in self.weigh_bins:
 
-            if (value > k[1][0]) and (value < k[1][1]):
+            if (value >= k[1][0]) and (value < k[1][1]):
 
+                print("assigned to bin "+str(k[1][1]))
                 k[0]+=1
-
                 return True
 
-        else:
-                return False
+        return False
 
 
 
     def reset_bins(self):
 
-        for k in range(len(self.weigh_bins)):
-            self.weigh_bins[k] = [0,(self.min_weight + (k*self.increment), self.max_weight + ((k+1)*self.increment))]
+        self.weigh_bins=[]
+
+        for k in range(300):
+            self.weigh_bins.append([0,(self.min_weight + (k*self.increment), self.min_weight + ((k+1)*self.increment))])
  
             
 
@@ -106,16 +110,19 @@ class scale(threading.Thread):
             if k[0] > maxcount:
                 maxcount = k[0]
                 total = (k[0]*(k[1][0]+k[1][1])/2)
-                valid = 1
+                valid = k[0]
 
             elif k[0] == maxcount:
                 total += (k[0]*(k[1][0]+k[1][1])/2)
-                valid += 1
+                valid += k[0]
 
             else:
                 pass
 
-        return(total/valid)
+        if (valid == 0):
+            return 0
+        else:
+            return(total/valid)
 
 
 
@@ -131,6 +138,7 @@ def main(): # self-test routine
     try:
 
         while True:
+            #print(scale_loop.read_scale())
             time.sleep(0.015)
 
     except (KeyboardInterrupt):
