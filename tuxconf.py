@@ -2,8 +2,8 @@
 
 # Camera
 image_dir = '/home/pi/tuxcap_v2/img/'
-pre_buffer = 10
-post_buffer = 10
+pre_buffer = 35
+post_buffer = 35
 frame_period = 0.1
 image_width = 1280
 image_height = 720
