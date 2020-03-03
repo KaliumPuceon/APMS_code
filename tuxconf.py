@@ -15,7 +15,8 @@ serial_baud = '115200'
 
 # Scale
 weight_log = '/home/pi/tuxcap_v2/weight_log.txt'
-weight_threshold = 0.996
+weight_threshold = 200000
+reference = 1
 calibration_factor = 51712.18
 weights_array_size = 10;
 

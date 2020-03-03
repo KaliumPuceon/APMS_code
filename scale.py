@@ -1,7 +1,10 @@
 import time
 import collections
 import threading
+import sys
 import tuxconf as tc
+from hx711 import HX711
+import RPi.GPIO as GPIO
 
 class scale(threading.Thread):
 
@@ -13,10 +16,24 @@ class scale(threading.Thread):
 
         self.min_weight = 1.5
         self.max_weight = 5
+
+        self.threshold = tc.weight_threshold
         self.on_scale = False
         self.off_scale_count = 0
 
         self.increment = (5-1.5)/300
+
+        # Set up scale
+        print("connect to scale")
+        self.hx = HX711(5,6)
+        self.hx.set_reading_format("MSB", "MSB")
+        self.hx.set_reference_unit(tc.reference) # Set reference unit
+        self.hx.power_up()
+        print("reset scale")
+        self.hx.reset()
+        print("tare scale")
+        self.hx.tare()
+        # done setting up scale
 
         self.reset_bins()
             
@@ -27,9 +44,10 @@ class scale(threading.Thread):
 
             value = self.read_scale()
 
-            if (value > threshold) and (not self.on_scale):
+            if (value > self.threshold) and (not self.on_scale):
 
                 self.on_scale = True
+                print("Animal on scale")
                 self.off_scale_count = 0
 
             if self.on_scale:
@@ -38,6 +56,7 @@ class scale(threading.Thread):
                 if not valid_measure:
                     
                     self.off_scale_count += 1
+                    print("off scale count: " + str(self.off_scale_count))
 
                     if self.off_scale_count > 50:
 
@@ -54,9 +73,7 @@ class scale(threading.Thread):
                         with open(tc.weight_log, 'a') as file:
                             myfile.write(weight_time+","+str(weight))
 
-                        
-            
-            
+
     def assign_bin(self,value):
 
         for k in self.weigh_bins:
@@ -74,7 +91,7 @@ class scale(threading.Thread):
 
     def reset_bins(self):
 
-        for k in range(300):
+        for k in range(len(self.weigh_bins)):
             self.weigh_bins[k] = [0,(self.min_weight + (k*self.increment), self.max_weight + ((k+1)*self.increment))]
  
             
@@ -103,6 +120,24 @@ class scale(threading.Thread):
 
 
     def read_scale(self):
-        return 4;
+        return self.hx.get_weight(5)
+
+def main(): # self-test routine
+
+    scale_loop = scale()
+    scale_loop.setDaemon(True)
+    scale_loop.start()
+
+    try:
+
+        while True:
+            time.sleep(0.015)
+
+    except (KeyboardInterrupt):
+        print("Ending loop")
+        GPIO.cleanup()
+        sys.exit()
 
 
+if __name__ == "__main__":
+    main()
