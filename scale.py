@@ -37,7 +37,7 @@ class scale(threading.Thread):
 
         self.reset_bins()
             
-        print(self.weigh_bins)
+        #print(self.weigh_bins)
 
     def run(self):
 
@@ -72,7 +72,7 @@ class scale(threading.Thread):
                         weight_time = str(int(time.time()))
 
                         with open(tc.weight_log, 'a') as file:
-                            file.write(weight_time+","+str(weight))
+                            file.write(weight_time+","+str(weight)+"\n")
                 else:
                     self.off_scale_count = 0
 
