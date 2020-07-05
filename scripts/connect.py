@@ -13,14 +13,14 @@ def ssh_running():
         out = subprocess.check_output("pgrep -x ssh", shell=True)
         print(out)
     except subprocess.CalledProcessError as e:
-        print("Running and activating ssh. Please wait for 1 minute...")
+        print("Waiting for SSH connection")
 
 	run_ssh()
 
 # runs the ssh reverse tunnel
 def run_ssh():
     try:
-	ssh_command= "ssh -i %s -N -R %s:localhost:22 %s" % (keyfile, port, username_ipaddress)
+	ssh_command= "ssh -o ServerAliveInterval 30 -i %s -N -R %s:localhost:22 %s" % (keyfile, port, username_ipaddress)
 	ssh_output = subprocess.check_output(ssh_command, shell=True)
 	if not ssh_output:
 	    print("Successful")
