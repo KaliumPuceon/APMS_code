@@ -2,17 +2,26 @@ import time
 import collections
 import threading
 import sys
+import os
 import tuxconf as tc
 from hx711 import HX711
+#from fake_hx711 import HX711
 import RPi.GPIO as GPIO
 
 class scale(threading.Thread):
 
     def __init__(self):
+
+        try:
+            os.makedirs(tc.weight_raw_path)
+        except FileExistsError:
+            print("Scale raw data dir already exists")
+
         threading.Thread.__init__(self)
         self.running = True
         self.scale_arrived = False
         self.weigh_bins = []
+        self.raw_readings = []
 
         self.min_weight = 1.5
         self.max_weight = 5
@@ -49,6 +58,7 @@ class scale(threading.Thread):
 
                 self.on_scale = True
                 print("Animal on scale")
+                self.raw_readings = []
                 self.off_scale_count = 0
 
             if self.on_scale:
@@ -57,7 +67,7 @@ class scale(threading.Thread):
                 if not valid_measure:
                     
                     self.off_scale_count += 1
-                    print("off scale count: " + str(self.off_scale_count) + " with "+str(value/1000))
+                    #print("off scale count: " + str(self.off_scale_count) + " with "+str(value/1000))
 
                     if self.off_scale_count > 50:
 
@@ -71,8 +81,17 @@ class scale(threading.Thread):
 
                         weight_time = str(int(time.time()))
 
-                        with open(tc.weight_log, 'a') as file:
-                            file.write(weight_time+","+str(weight)+"\n")
+                        if (weight > 0.5):
+
+                            with open(tc.weight_log, 'a') as file:
+                                file.write(weight_time+","+str(weight)+"\n")
+
+                            with open(tc.weight_raw_path + weight_time +".txt", 'w') as file:
+                                for k in self.raw_readings:
+                                    file.write(str(k)+"\n")
+
+                        self.raw_readings = []
+
                 else:
                     self.off_scale_count = 0
 
@@ -83,8 +102,9 @@ class scale(threading.Thread):
 
             if (value >= k[1][0]) and (value < k[1][1]):
 
-                print("assigned to bin "+str(k[1][1]))
+                #print("assigned to bin "+str(k[1][1]))
                 k[0]+=1
+                self.raw_readings.append(value) # FIXME: only valid temporarily
                 return True
 
         return False

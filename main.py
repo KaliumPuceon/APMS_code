@@ -17,11 +17,11 @@ def main():
     cam_loop.start()
     print("Camera started")
 
-#    print("Starting scale")
-#    scale_loop = scale.scale()
-#    scale_loop.setDaemon(true)
-#    scale_loop.start()
-#    print("Scale ready")
+    print("Starting scale")
+    scale_loop = scale.scale()
+    scale_loop.setDaemon(True)
+    scale_loop.start()
+    print("Scale ready")
 
     print("Start RFID scanner")
     rfid_loop = rfid.rfid()
@@ -38,9 +38,9 @@ def main():
                 cam_loop.request_buffer()
                 rfid_loop.tag_arrived = False
 
-            #if scale_loop.scale_arrived: # if new tag, fire camera and reset flag
-            #    cam_loop.request_buffer()
-            #    scale_loop.scale_arrived = False
+            if scale_loop.scale_arrived: # if new tag, fire camera and reset flag
+                cam_loop.request_buffer()
+                scale_loop.scale_arrived = False
 
 
     except KeyboardInterrupt:

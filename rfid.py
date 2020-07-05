@@ -2,6 +2,7 @@ import serial
 import time
 import threading
 import tuxconf as tc
+import sys
 
 class rfid(threading.Thread):
 
@@ -30,3 +31,20 @@ class rfid(threading.Thread):
         self.device.close()
 
 
+def main():
+    print("Start RFID scanner")
+    rfid_loop = rfid()
+    rfid_loop.setDaemon(True)
+    rfid_loop.start()
+    print("Scanner started")
+
+    try:
+        while True:
+            continue
+    except KeyboardInterrupt:
+        rfid.running=False
+        sys.exit()
+
+
+if __name__ == "__main__":
+    main()
