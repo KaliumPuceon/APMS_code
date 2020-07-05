@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize virtual RFID TTY and fake_HX711 source file
+
+[Service]
+User=pi
+Group=pi
+ExecStart=/home/pi/testing/run_test.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

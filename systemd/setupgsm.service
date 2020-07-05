@@ -1,0 +1,13 @@
+[Unit]
+Description=Configure GSM HAT and DHCP for IP Address
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=pi
+Group=pi
+ExecStartPre=/bin/sleep 30
+ExecStart=/home/pi/scripts/gsm.sh
+
+[Install]
+WantedBy=multi-user.target

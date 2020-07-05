@@ -1,0 +1,1 @@
+/dev/sda1 /home/pi/data auto nofail,x-systemd.device-timeout=30s,rw,user,umask=000,noatime 0 0

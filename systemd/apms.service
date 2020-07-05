@@ -1,0 +1,13 @@
+[Unit]
+Description=Start AutoSSH Tunnel to awful.cloud
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+ExecStart=/home/pi/tuxcap_v2/main.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
